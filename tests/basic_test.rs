@@ -856,3 +856,74 @@ fn create_and_take_and_refund_offer_unit_test() {
             call_refund_offer(&t_test_data).expect(TxExpect::ok().no_result())
         );
 }
+/*-------------------------------------------------------------------------*
+* Forbidden multi_esdt transfer on create.                                 *
+*-------------------------------------------------------------------------*/
+#[test]
+#[should_panic(expected = "incorrect number of ESDT transfers")]
+fn create_multi_esdt_offer_unit_test() {
+    //std::env::set_var("RUST_BACKTRACE", "full");
+
+    let t_owner_address : &str = "address:owner";
+
+    let t_sc_address : &str = "sc:exchangeplace";
+
+    let mut world = world();
+    let exchange_place_code = world.code_expression(EXCHANGE_PLACE_PATH_EXPR); //BytesValue representing the wasm code
+
+    let t_str_token_id : &str = "PROPO-123456";
+    let t_nonce: u64 = 0;
+
+    //BigUint amount
+    let t_amount: u64 = 100000000000;
+
+    //BigUint price
+    let t_price: u64 = 700000000000;
+    let t_offer_id: u64 = 1;
+
+    //Addresses
+    let t_bidder_address : &str = "erd1suej7d7yl5x95quuh38ur9x0vj2tdvy3rzuqx9n4dnulskyxvl0q0ec3n0";
+    let t_taker_address : &str = "erd16jruked88jgtsar78ej85hjp3qsd9jkjcw4swsn7k0teqh3wgcqqgyrupq";
+
+    let t_test_data = TestData::new(t_str_token_id, t_nonce, t_amount, t_price, t_offer_id, t_bidder_address, t_taker_address);
+
+    let t_set_step = SetStateStep::new()
+    .put_account(t_owner_address, Account::new().nonce(1)) //define address expression (str) and Account struct
+    .new_address(t_owner_address, 1, t_sc_address) //define creator address expression (str), creator nonce (u64) and new address expression
+    .put_account(AddressKey::from(&bech32::decode(t_bidder_address)), Account::new().nonce(0).esdt_balance(BytesKey::from(t_str_token_id.as_bytes().to_vec()),BigUintValue::from(2*t_amount))) //Into bytes must be used in order for the VM to correctly parse the token ID string
+    .put_account(AddressKey::from(&bech32::decode(t_taker_address)), Account::new().nonce(0).balance(BigUintValue::from(t_price + M_FEE)));        
+
+    // Create two instances of TxESDT
+    let tx1 = TxESDT {
+        esdt_token_identifier: BytesValue::from(BytesKey::from(t_test_data.str_token_id.clone().into_bytes())),
+        nonce: U64Value::from(t_test_data.nonce),
+        esdt_value: BigUintValue::from(BigUintValue::from(t_test_data.amount)),
+    };
+
+    let tx2 = TxESDT {
+        esdt_token_identifier: BytesValue::from(BytesKey::from(t_test_data.str_token_id.clone().into_bytes())),
+        nonce: U64Value::from(t_test_data.nonce),
+        esdt_value: BigUintValue::from(BigUintValue::from(t_test_data.amount)),
+    };
+
+    // Create a vector and initialize it with tx1 and tx2
+    let tx_vec: Vec<TxESDT> = vec![tx1, tx2];
+
+    world.set_state_step(
+            t_set_step
+        )
+        .sc_deploy( //deploy a step
+            deploy_step(t_owner_address, &exchange_place_code).expect(TxExpect::ok().no_result()) //expect a TxExpect struct
+        )
+         .sc_call( //First call: place the bid
+            ScCallStep::new()
+            .from(AddressKey::from(&t_test_data.bidder_bech32)) //Address of the caller
+            .to("sc:exchangeplace") //destination of the call (the smart contract)
+            .multi_esdt_transfer(tx_vec) //Transfer the NFT or SFT
+            .egld_value(BigUintValue::from(M_FEE)) //Pay the fee
+            .function("createOffer") //The name of the function
+            .argument(BytesValue::from(t_test_data.offer_id.to_be_bytes().as_ref())) //ID of the offer
+            .argument(BytesValue::from(t_test_data.price.to_be_bytes().as_ref())) //Price of the offer
+            .argument(BytesValue::from(t_test_data.taker_bech32.as_bytes())) //Address of the taker
+         );
+}
