@@ -1,0 +1,139 @@
+{
+    "name": "Exchange place element placing with gas",
+    "steps": [
+        {
+            "step": "externalSteps",
+            "path": "exchange-place-initialization.scen.json"
+        },
+        {
+            "step": "setState",
+            "accounts": {
+                "address:proposer1": {
+                    "nonce": "0",
+                    "balance": "2,000,000,000",
+                    "esdt": {
+                        "str:PROPO-123456": {
+                            "instances": [
+                                {
+                                    "nonce": "1",
+                                    "balance": "100,000,000,000"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "address:receiver1": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:PROPO-123456": {
+                            "instances": [
+                                {
+                                    "nonce": "1",
+                                    "balance": "0"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "propose-1",
+            "tx": {
+                "from": "address:proposer1",
+                "to": "sc:exchangeplace",
+                "value": "0",
+                "esdtValue": [
+                    {
+                        "tokenIdentifier": "str:PROPO-123456",
+                        "nonce": "1",
+                        "value": "100,000,000,000"
+                    }
+                ],
+                "function": "createOffer",
+                "arguments": ["1","700,000,000,000","address:receiver1"],
+                "gasLimit": "100,000,000",
+                "gasPrice": "20"
+            },
+            "expect": {
+                "out": [],
+                "status": "",
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "checkState",
+            "accounts": {
+                "address:my_address": {
+                    "nonce": "1",
+                    "balance": "1,000,000",
+                    "storage": {}
+                  },
+                "address:proposer1": {
+                    "nonce": "1",
+                    "balance": "0",
+                    "esdt": {
+                        "str:PROPO-123456": {
+                            "instances": [
+                                {
+                                    "nonce": "1",
+                                    "balance": "0"
+                                }
+                            ]
+                        }
+                    },
+                    "storage": {}
+                },
+                "address:receiver1": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:PROPO-123456": {
+                            "instances": [
+                                {
+                                    "nonce": "1",
+                                    "balance": "0"
+                                }
+                            ]
+                        }
+                    },
+                    "storage": {}
+                },
+                "sc:exchangeplace": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:PROPO-123456": {
+                            "instances": [
+                                {
+                                    "nonce": "1",
+                                    "balance": "100,000,000,000"
+                                }
+                            ]
+                        }
+                    },
+                    "storage": {
+                      "str:marketplaceElements.info": "u32:1|u32:1|u32:1|u32:1",
+                      "str:marketplaceElements.node_links|u32:1": "u32:0|u32:0",
+                      "str:marketplaceElements.node_id|u64:1|address:proposer1|address:receiver1": "1",
+                      "str:marketplaceElements.value|u32:1": {
+                        "0-offer_id":"u64:1",
+                        "1-bidder_address": "address:proposer1",
+                        "2-getter_address": "address:receiver1"           
+                    },
+                      "str:marketplaceElements.mapped|u64:1|address:proposer1|address:receiver1": {
+                        "0-collection_id":"nested:str:PROPO-123456",
+                        "1-nonce": "u64:1",
+                        "2-amount": "biguint:100,000,000,000",
+                        "3-price": "biguint:700,000,000,000"
+                    }
+                    },
+                    "code": "file:../output/exchange_place.wasm"
+                }
+            }
+        }
+    ]
+}

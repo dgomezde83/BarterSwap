@@ -1,0 +1,53 @@
+{
+    "name": "Exchange place initialization",
+    "steps": [
+        {
+          "step": "setState",
+          "accounts": {
+            "address:my_address": {
+              "nonce": "0",
+              "balance": "1,000,000"
+            }
+          },
+          "newAddresses": [
+            {
+              "creatorAddress": "address:my_address",
+              "creatorNonce": "0",
+              "newAddress": "sc:exchangeplace"
+            }
+          ]
+        },
+        {
+          "step": "scDeploy",
+          "txId": "deploy",
+          "tx": {
+            "from": "address:my_address",
+            "contractCode": "file:../output/exchange_place.wasm",
+            "arguments": [],
+            "gasLimit": "5,000,000",
+            "gasPrice": "0"
+          },
+          "expect": {
+            "out": [],
+            "status": "0",
+            "gas": "*",
+            "refund": "*"
+          }
+        },
+        {
+          "step": "checkState",
+          "accounts": {
+            "address:my_address": {
+              "nonce": "1",
+              "balance": "1,000,000",
+              "storage": {}
+            },
+            "sc:exchangeplace": {
+              "nonce": "0",
+              "balance": "0",
+              "code": "file:../output/exchange_place.wasm"
+            }
+          }
+        }
+      ]
+}

@@ -1,0 +1,142 @@
+{
+    "name": "Exchange place refund offer",
+    "steps": [
+        {
+            "step": "externalSteps",
+            "path": "exchange-place-initialization.scen.json"
+        },
+        {
+            "step": "setState",
+            "accounts": {
+                "address:proposer1": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:PROPO-123456": {
+                            "instances": [
+                                {
+                                    "nonce": "1",
+                                    "balance": "100,000,000,000"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "address:receiver1": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:PROPO-123456": {
+                            "instances": [
+                                {
+                                    "nonce": "1",
+                                    "balance": "0"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "propose-1",
+            "tx": {
+                "from": "address:proposer1",
+                "to": "sc:exchangeplace",
+                "value": "0",
+                "esdtValue": [
+                    {
+                        "tokenIdentifier": "str:PROPO-123456",
+                        "nonce": "1",
+                        "value": "100,000,000,000"
+                    }
+                ],
+                "function": "createOffer",
+                "arguments": ["1","700,000,000,000","address:receiver1"],
+                "gasLimit": "100,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "",
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "refund-offer-1",
+            "tx": {
+                "from": "address:proposer1",
+                "to": "sc:exchangeplace",
+                "value": "0",
+                "function": "refundOffer",
+                "arguments": ["1","address:receiver1"],
+                "gasLimit": "100,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "",
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "checkState",
+            "accounts": {
+                "address:my_address": {
+                    "nonce": "1",
+                    "balance": "1,000,000",
+                    "storage": {}
+                  },
+                "address:proposer1": {
+                    "nonce": "2",
+                    "balance": "0",
+                    "esdt": {
+                        "str:PROPO-123456": {
+                            "instances": [
+                                {
+                                    "nonce": "1",
+                                    "balance": "100,000,000,000"
+                                }
+                            ]
+                        }
+                    },
+                    "storage": {}
+                },
+                "address:receiver1": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:PROPO-123456": {
+                            "instances": [
+                                {
+                                    "nonce": "1",
+                                    "balance": "0"
+                                }
+                            ]
+                        }
+                    },
+                    "storage": {}
+                },
+                "sc:exchangeplace": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:PROPO-123456": {
+                            "instances": [
+                                {
+                                    "nonce": "1",
+                                    "balance": "0"
+                                }
+                            ]
+                        }
+                    },
+                    "code": "file:../output/exchange_place.wasm"
+                }
+            }
+        }
+    ]
+}
