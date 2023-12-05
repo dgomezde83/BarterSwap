@@ -1,0 +1,16 @@
+[package]
+name = "exchange_place_meta"
+version = "0.0.0"
+edition = "2018"
+publish = false
+authors = [ "you",]
+
+[dev-dependencies]
+
+[dependencies.exchange_place]
+path = ".."
+
+[dependencies.multiversx-sc-meta]
+version = "0.45.1"
+
+
