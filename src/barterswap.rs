@@ -53,8 +53,7 @@ pub trait ExchangePlace {
         self.insert_element(t_esdt_structure, p_price, p_offer_id, t_bidder_address, p_taker_address);
     }
     /*-------------------------------------------------------------------------*
-    * Refund an offer to the bidder. Should be called by the bidder of the     *
-    * offer with the id he provided when creating it as well as the taker addr.*
+    * Refund an offer to the bidder. Should be called by the bidder.           *
     * Input:                                                                   *
     * u64 representing the ID.                                                 *
     * Address of the taker of the offer.                                       *
@@ -78,11 +77,10 @@ pub trait ExchangePlace {
         }
     }
     /*-------------------------------------------------------------------------*
-    * Take an offer by ID. Should be called by the taker of the offer with the *
-    * id the bidder defined, as well as the id the bidder gave to the offer.   *
+    * Take an offer by ID. Should be called by the taker of the offer.         *
     * Input:                                                                   *
     * u64 representing the ID.                                                 *
-    * Address of the bidder of the offer.                                      *
+    * ManagedAddress representing the address of bidder.                       *
     *-------------------------------------------------------------------------*/
     #[payable("EGLD")]
     #[endpoint(takeOffer)]
@@ -109,34 +107,12 @@ pub trait ExchangePlace {
         }
     }
     /*-------------------------------------------------------------------------*
-    * Finds an element in the hashmap provided the bidder address, the taker   *
-    * address, and the id. This constitutes a key.                             *
-    * Input:                                                                   *
-    * u64 representing the ID.                                                 *
-    * ManagedAddress representing the address of bidder.                       *
-    * ManagedAddress representing the address to refund.                       *
-    * Output:                                                                  *
-    * Monad of the MarketplaceElement.                                         *
-    *-------------------------------------------------------------------------*/
-    fn find_element_by_key(&self, p_offer_id: u64, p_bidder_address: ManagedAddress, p_taker_address: ManagedAddress)-> Option<MarketplaceElement<Self::Api>>
-    {
-        // Create the key
-        let t_key = KeyElement::new(            
-            p_offer_id,
-            p_bidder_address,
-            p_taker_address,
-        );
-
-        // Return monad
-        self.marketplace_elements().get(&t_key)
-    }
-    /*-------------------------------------------------------------------------*
     * Removes an element in the hashmap provided the bidder address, the taker *
     * address, and the id. This constitutes a key.                             *
     * Input:                                                                   *
     * u64 representing the ID.                                                 *
     * ManagedAddress representing the address of bidder.                       *
-    * ManagedAddress representing the address to refund.                       *
+    * ManagedAddress representing the address of the taker.                    *
     * Output:                                                                  *
     * Monad of the MarketplaceElement.                                         *
     *-------------------------------------------------------------------------*/
@@ -160,8 +136,6 @@ pub trait ExchangePlace {
     * u64 representing the offer id.                                           *
     * ManagedAddress representing the address of bidder.                       *
     * ManagedAddress representing the address to refund.                       *
-    * Output:                                                                  *
-    * True or false depending on the success of the operation.                 *
     *-------------------------------------------------------------------------*/
     fn insert_element(&self, p_esdt_structure: EsdtTokenPayment, p_price: BigUint, p_offer_id: u64, p_bidder_address: ManagedAddress, p_taker_address: ManagedAddress)
     {        
