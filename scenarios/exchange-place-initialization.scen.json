@@ -22,7 +22,7 @@
           "txId": "deploy",
           "tx": {
             "from": "address:my_address",
-            "contractCode": "file:../output/exchange_place.wasm",
+            "contractCode": "file:../output/barterswap.wasm",
             "arguments": [],
             "gasLimit": "5,000,000",
             "gasPrice": "0"
@@ -45,7 +45,7 @@
             "sc:exchangeplace": {
               "nonce": "0",
               "balance": "0",
-              "code": "file:../output/exchange_place.wasm"
+              "code": "file:../output/barterswap.wasm"
             }
           }
         }

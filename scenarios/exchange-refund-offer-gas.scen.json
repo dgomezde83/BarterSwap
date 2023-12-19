@@ -134,7 +134,7 @@
                             ]
                         }
                     },
-                    "code": "file:../output/exchange_place.wasm"
+                    "code": "file:../output/barterswap.wasm"
                 }
             }
         }

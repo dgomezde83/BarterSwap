@@ -1,4 +1,4 @@
-use exchange_place::*;
+use barterswap::*;
 use multiversx_sc::types::Address;
 use multiversx_sc_scenario::api::SingleTxApi;
 use multiversx_sc_scenario::{scenario_model::*, *};
@@ -9,7 +9,7 @@ use multiversx_sc_scenario::{scenario_model::*, *};
 /*-------------------------------------------------------------------------*
 *                                                                          *
 *-------------------------------------------------------------------------*/
-const EXCHANGE_PLACE_PATH_EXPR: &str = "file:output/exchange_place.wasm";
+const EXCHANGE_PLACE_PATH_EXPR: &str = "file:output/barterswap.wasm";
 //const M_FEE: u64 = 20000000000000000;
 const M_FEE: u64 = 0;
 /*-------------------------------------------------------------------------*
@@ -17,7 +17,7 @@ const M_FEE: u64 = 0;
 *-------------------------------------------------------------------------*/
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
-    blockchain.register_contract(EXCHANGE_PLACE_PATH_EXPR, exchange_place::ContractBuilder);
+    blockchain.register_contract(EXCHANGE_PLACE_PATH_EXPR, barterswap::ContractBuilder);
     blockchain
 }
 /*-------------------------------------------------------------------------*
@@ -145,7 +145,7 @@ fn call_refund_offer(p_test_data: &TestData) -> ScCallStep
 *-------------------------------------------------------------------------*/
 #[test]
 fn init_unit_test() {
-    let t_exchanger = exchange_place::contract_obj::<SingleTxApi>();
+    let t_exchanger = barterswap::contract_obj::<SingleTxApi>();
     t_exchanger.init();
 }
 /*-------------------------------------------------------------------------*

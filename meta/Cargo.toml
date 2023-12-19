@@ -1,13 +1,13 @@
 [package]
-name = "exchange_place_meta"
-version = "0.0.0"
+name = "barterswap_meta"
+version = "1.0.0"
 edition = "2021"
-publish = false
-authors = [ "you",]
+publish = true
+authors = [ "Multifungible"]
 
 [dev-dependencies]
 
-[dependencies.exchange_place]
+[dependencies.barterswap]
 path = ".."
 
 [dependencies.multiversx-sc-meta]

@@ -131,7 +131,7 @@
                         "3-price": "biguint:700,000,000,000"
                     }
                     },
-                    "code": "file:../output/exchange_place.wasm"
+                    "code": "file:../output/barterswap.wasm"
                 }
             }
         }

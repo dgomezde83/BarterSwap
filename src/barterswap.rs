@@ -19,7 +19,7 @@ use structure_elements::{KeyElement,MarketplaceElement};
 const M_FEE: u64 = 0;
 
 #[multiversx_sc::contract]
-pub trait ExchangePlace {    
+pub trait BarterSwap {    
     // In the init, we don't need to initialize anything
     // https://docs.multiversx.com/developers/developer-reference/sc-annotations
     /*-------------------------------------------------------------------------*

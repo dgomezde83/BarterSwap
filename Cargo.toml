@@ -1,11 +1,11 @@
 [package]
-name = "exchange_place"
-version = "0.0.1"
-authors = [ "you",]
+name = "barterswap"
+version = "1.0.0"
+authors = [ "Multifungible"]
 edition = "2021"
 
 [lib]
-path = "src/exchange-place.rs"
+path = "src/barterswap.rs"
 
 [dependencies.multiversx-sc]
 version = "0.45.1"

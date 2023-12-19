@@ -1,5 +1,5 @@
 **/.DS_Store
-**/cargo.lock
 meta/target/*
 output
-
+wasm/target/*
+target/*
